@@ -37,3 +37,19 @@
          (doc-words (cdr command-words))
          (doc (concat (mapconcat #'identity doc-words " "))))
     (cons command doc)))
+
+(defun cargo-mode--start (name command project-root)
+  "Start the cargo-mode process NAME with the cargo command COMMAND from PROJECT-ROOT.
+Returns the created process."
+  (let* ((buffer (concat "*cargo-mode " name "*"))
+         (path-to-bin (shell-quote-argument cargo-path-to-bin))
+         (base-cmd (concat path-to-bin " " command))
+         (default-directory (or project-root default-directory)))
+    (save-some-buffers (not compilation-ask-about-save)
+                       (lambda ()
+                         (and project-root
+                              buffer-file-name
+                              (string-prefix-p project-root (file-truename buffer-file-name)))))
+    (setq cargo-mode--last-command (list name cmd project-root))
+    (compilation-start cmd 'cargo-mode (lambda(_) buffer))
+    (get-buffer-process buffer)))
