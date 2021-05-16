@@ -7,6 +7,11 @@
 
 (defvar cargo-mode--last-command nil "Last cargo command.")
 
+(define-derived-mode cargo-mode compilation-mode "Cargo"
+  "Major mode for the Cargo buffer."
+  (setq buffer-read-only t)
+  (setq-local truncate-lines t))
+
 (defun cargo-mode-last-command ()
   "Execute the last cargo-mode task."
   (interactive)
@@ -43,7 +48,7 @@
 Returns the created process."
   (let* ((buffer (concat "*cargo-mode " name "*"))
          (path-to-bin (shell-quote-argument cargo-path-to-bin))
-         (base-cmd (concat path-to-bin " " command))
+         (cmd (concat path-to-bin " " command))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
@@ -53,3 +58,17 @@ Returns the created process."
     (setq cargo-mode--last-command (list name cmd project-root))
     (compilation-start cmd 'cargo-mode (lambda(_) buffer))
     (get-buffer-process buffer)))
+
+(defun cargo-mode--project-directory ()
+  "Find the project directory."
+  (let ((closest-path (or buffer-file-name default-directory)))
+    (locate-dominating-file closest-path "Cargo.toml")))
+
+(defun cargo-mode--execute-task ()
+  "Select and execute cargo task."
+  (interactive)
+  (let* ((project-root (cargo-mode--project-directory))
+         (available-commands (cargo-mode--available-tasks project-root))
+         (test (print available-commands))
+         (selected-command (completing-read "select cargo command: " available-commands)))
+    (cargo-mode--start "execute" selected-command project-root)))
