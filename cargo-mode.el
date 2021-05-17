@@ -32,16 +32,40 @@
   "Lists all available tasks in PROJECT-ROOT."
   (interactive "P")
   (let* ((raw_tasks (cargo-mode--fetch-cargo-tasks project-root))
-        (result (mapcar #'cargo-mode--format-command raw_tasks)))
-    (print result)))
+         (commands (mapcar #'cargo-mode--split-command raw_tasks)))
+    (cargo-mode--format-commands commands)))
 
-(defun cargo-mode--format-command (raw-command)
+(defun cargo-mode--format-commands (commands)
+  (let ((max-length (cargo-mode--max-command-length (car commands) (cdr commands))))
+    (mapcar
+     (lambda (command) (cargo-mode--concat-command-and-doc command max-length))
+     commands)))
+
+(defun cargo-mode--concat-command-and-doc (command-with-doc max-command-length)
+  (let* ((command (car command-with-doc))
+        (doc (cdr command-with-doc))
+        (command-length (length command))
+        (whitespaces-number (- (+ max-command-length 1) command-length))
+        (whitespaces-string (make-string whitespaces-number ?\s)))
+    (concat command whitespaces-string "# " doc)))
+
+
+(defun cargo-mode--split-command (raw-command)
   "Splits command and doc string in RAW-COMMAND."
   (let* ((command-words (split-string raw-command))
          (command (car command-words))
          (doc-words (cdr command-words))
          (doc (concat (mapconcat #'identity doc-words " "))))
     (cons command doc)))
+
+(defun cargo-mode--max-command-length (first-arg more-args)
+  (if more-args
+      (let ((max-rest (cargo-mode--max-command-length (car more-args) (cdr more-args)))
+            (first-arg-length (length (car first-arg))))
+	(if (> first-arg-length max-rest)
+	    first-arg-length
+	  max-rest))
+    (length (car first-arg))))
 
 (defun cargo-mode--start (name command project-root)
   "Start the cargo-mode process NAME with the cargo command COMMAND from PROJECT-ROOT.
@@ -70,5 +94,6 @@ Returns the created process."
   (let* ((project-root (cargo-mode--project-directory))
          (available-commands (cargo-mode--available-tasks project-root))
          (test (print available-commands))
-         (selected-command (completing-read "select cargo command: " available-commands)))
-    (cargo-mode--start "execute" selected-command project-root)))
+         (selected-command (completing-read "select cargo command: " available-commands))
+         (command-without-doc (car (split-string selected-command))))
+    (cargo-mode--start "execute" command-without-doc project-root)))
