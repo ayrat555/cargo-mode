@@ -5,6 +5,11 @@
   :type 'file
   :group 'cargo-mode)
 
+(defcustom cargo-mode-command-test "test"
+  "Subcommand used by `cargo-mode-test'."
+  :type 'string
+  :group 'cargo-mode)
+
 (defvar cargo-mode--last-command nil "Last cargo command.")
 
 (define-derived-mode cargo-mode compilation-mode "Cargo"
@@ -43,7 +48,6 @@ Space between them is based on MAX-COMMAND-LENGTH."
         (whitespaces-string (make-string whitespaces-number ?\s)))
     (concat command whitespaces-string "# " doc)))
 
-
 (defun cargo-mode--split-command (raw-command)
   "Split command and doc string in RAW-COMMAND."
   (let* ((command-words (split-string raw-command))
@@ -63,15 +67,17 @@ The current element is FIRST-ARG, remaining args are MORE-ARGS."
 	  max-rest))
     (length (car first-arg))))
 
-(defun cargo-mode--start (name command project-root)
+(defun cargo-mode--start (name command project-root &optional prompt)
   "Start the cargo-mode process with NAME and return the created process.
 Cargo command is COMMAND.
-The command is  started from directory PROJECT-ROOT."
+The command is  started from directory PROJECT-ROOT.
+If PROMPT is non-nil, modifies the command."
   (let* ((buffer (concat "*cargo-mode " name "*"))
          (path-to-bin (shell-quote-argument cargo-path-to-bin))
-         (cmd (if (string-match-p path-to-bin command)
+         (base-cmd (if (string-match-p path-to-bin command)
                   command
-                (concat path-to-bin " " command)))
+                  (concat path-to-bin " " command)))
+         (cmd (cargo-mode--maybe-add-additional-params base-cmd prompt))
          (default-directory (or project-root default-directory)))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
@@ -87,14 +93,23 @@ The command is  started from directory PROJECT-ROOT."
   (let ((closest-path (or buffer-file-name default-directory)))
     (locate-dominating-file closest-path "Cargo.toml")))
 
-(defun cargo-mode--execute-task ()
-  "Select and execute cargo task."
-  (interactive)
+(defun cargo-mode-execute-task (&optional prefix)
+  "Select and execute cargo task.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
   (let* ((project-root (cargo-mode--project-directory))
          (available-commands (cargo-mode--available-tasks project-root))
          (selected-command (completing-read "select cargo command: " available-commands))
          (command-without-doc (car (split-string selected-command))))
-    (cargo-mode--start "execute" command-without-doc project-root)))
+    (cargo-mode--start "execute" command-without-doc project-root prefix)))
+
+(defun cargo-mode-test (&optional prefix)
+  "Run the cargo test command.
+If PREFIX is non-nil, prompt for additional params.`"
+  (interactive "P")
+  (let ((project-root (cargo-mode--project-directory)))
+    (cargo-mode--start "test" cargo-mode-command-test project-root prefix)))
+
 
 (defun cargo-mode-last-command ()
   "Execute the last cargo-mode task."
@@ -105,15 +120,16 @@ The command is  started from directory PROJECT-ROOT."
 
 (defvar cargo-mode-command-map
   (let ((km (make-sparse-keymap)))
-    (define-key km (kbd "e") 'cargo-mode--execute-task)
+    (define-key km (kbd "e") 'cargo-mode-execute-task)
     (define-key km (kbd "l") 'cargo-mode-last-command)
+    (define-key km (kbd "t") 'cargo-mode-test)
     km)
   "Cargo-mode keymap after prefix.")
-(fset 'cargo-minor-mode-command-map cargo-mode-command-map)
+(fset 'cargo-mode-command-map cargo-mode-command-map)
 
 (defvar cargo-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c d") 'cargo-minor-mode-command-map)
+    (define-key map (kbd "C-c d") 'cargo-mode-command-map)
     map)
   "Cargo-map keymap.")
 
