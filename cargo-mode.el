@@ -1,3 +1,51 @@
+;;; cargo-mode.el --- Cargo Major Mode. Cargo is the Rust package manager. -*- lexical-binding: t; -*-
+
+;; MIT License
+;;
+;; Copyright (c) 2021 Ayrat Badykov
+;;
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be included in all
+;; copies or substantial portions of the Software.
+;;
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;; SOFTWARE.
+
+;; Author: Ayrat Badykov <ayratin555@gmail.com>
+;; URL: https://github.com/ayrat555/cargo-mode
+;; Version  : 0.0.1
+;; Keywords: tools
+;; Package-Requires: ((emacs "25.1"))
+
+;;; Commentary:
+
+;; Add a hook to the mode that you're using with Rust, for example, `rust-mode`:
+;;
+;; (add-hook 'rust-mode-hook 'cargo-minor-mode)
+;;
+
+;;; C-c d e - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.
+;;; C-c d t - `cargo-mode-test` - Run all tests in the project (`cargo test`).
+;;; C-c d l - `cargo-mode-last-command` - Execute the last executed command.
+;;; C-c d b - `cargo-mode-build` - Build the project (`cargo build`).
+;;; C-c d o - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
+;;; C-c d f - `cargo-mode-test-current-test` - Run the current test where pointer is located.
+;;;
+;;; Use `C-u` to add extra command line params before executing a command.
+
+;;; Code:
+
 (defcustom cargo-path-to-bin
   (or (executable-find "cargo")
       "~/.cargo/bin/cargo")
