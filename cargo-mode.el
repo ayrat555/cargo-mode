@@ -1,4 +1,4 @@
-;;; cargo-mode.el --- Cargo Major Mode. Cargo is the Rust package manager. -*- lexical-binding: t; -*-
+;;; cargo-mode.el --- Cargo Major Mode. Cargo is the Rust package manager -*- lexical-binding: t; -*-
 
 ;; MIT License
 ;;
