@@ -10,6 +10,16 @@
   :type 'string
   :group 'cargo-mode)
 
+(defcustom cargo-mode-command-build "build"
+  "Subcommand used by `cargo-mode-build'."
+  :type 'string
+  :group 'cargo-mode)
+
+(defconst cargo-mode-test-mod-regexp "^[[:space:]]*mod[[:space:]]+[[:word:][:multibyte:]_][[:word:][:multibyte:]_[:digit:]]*[[:space:]]*{")
+
+(defconst cargo-mode-test-regexp "^[[:space:]]*fn[[:space:]]*"
+  "Regex to find Rust unit test function.")
+
 (defvar cargo-mode--last-command nil "Last cargo command.")
 
 (define-derived-mode cargo-mode compilation-mode "Cargo"
@@ -104,12 +114,88 @@ If PREFIX is non-nil, prompt for additional params."
     (cargo-mode--start "execute" command-without-doc project-root prefix)))
 
 (defun cargo-mode-test (&optional prefix)
-  "Run the cargo test command.
-If PREFIX is non-nil, prompt for additional params.`"
+  "Run the `cargo test` command.
+If PREFIX is non-nil, prompt for additional params."
   (interactive "P")
   (let ((project-root (cargo-mode--project-directory)))
     (cargo-mode--start "test" cargo-mode-command-test project-root prefix)))
 
+(defun cargo-mode-build (&optional prefix)
+  "Run the `cargo build` command.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let ((project-root (cargo-mode--project-directory)))
+    (cargo-mode--start "execute" cargo-mode-command-build project-root prefix)))
+
+(defun cargo-mode-test-current-buffer (&optional prefix)
+  "Run the cargo test for the current buffer.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let* ((project-root (cargo-mode--project-directory))
+        (current-mod (print (cargo-mode--current-mod)))
+        (command (concat cargo-mode-command-test " "  current-mod)))
+    (cargo-mode--start "test" command project-root prefix)))
+
+(defun cargo-mode-test-current-test (&optional prefix)
+  "Run the Cargo test command for the current test.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let* ((project-root (cargo-mode--project-directory))
+         (test-name (cargo-mode--current-test-fullname))
+         (command (concat cargo-mode-command-test " " test-name)))
+    (cargo-mode--start "test" command project-root prefix)))
+
+(defun cargo-mode--current-mod ()
+  "Return the current mod."
+  (save-excursion
+    (when (search-backward-regexp cargo-mode-test-mod-regexp nil t)
+      (let* ((line (buffer-substring-no-properties (line-beginning-position)
+                                                   (line-end-position)))
+             (line (string-trim-left line))
+             (lines (split-string line " \\|{"))
+             (mod (cadr lines)))
+        mod))))
+
+(defun cargo-mode--defun-at-point-p ()
+  "Find fn at point."
+  (string-match cargo-mode-test-regexp
+                (buffer-substring-no-properties (line-beginning-position)
+                                                (line-end-position))))
+
+(defun cargo-mode--current-test ()
+  "Return the current test."
+  (save-excursion
+    (unless (cargo-mode--defun-at-point-p)
+      (cond ((fboundp 'rust-beginning-of-defun)
+	     (rust-beginning-of-defun))
+	    ((fboundp 'rustic-beginning-of-defun)
+	     (rustic-beginning-of-defun))
+	    (t (user-error "%s needs either rust-mode or rustic-mode"
+			   this-command))))
+    (beginning-of-line)
+    (search-forward "fn ")
+    (let* ((line (buffer-substring-no-properties (point)
+                                                 (line-end-position)))
+           (lines (split-string line "("))
+           (function-name (car lines)))
+      function-name)))
+
+(defun cargo-mode--current-test-fullname ()
+  "Return the current test's fullname."
+  (let ((mod-name (cargo-mode--current-mod)))
+    (if mod-name
+        (concat mod-name
+                "::"
+                (cargo-mode--current-test))
+      (cargo-mode--current-test))))
+
+(defun cargo-mode--maybe-add-additional-params (command prefix)
+  "Prompt for additional cargo command COMMAND params.
+If PREFIX is nil, it does nothing"
+  (if prefix
+      (let  ((params (read-string (concat "additional cargo command params for `" command "`: "))))
+        (concat command " " params))
+    command))
 
 (defun cargo-mode-last-command ()
   "Execute the last cargo-mode task."
@@ -120,9 +206,12 @@ If PREFIX is non-nil, prompt for additional params.`"
 
 (defvar cargo-mode-command-map
   (let ((km (make-sparse-keymap)))
+    (define-key km (kbd "b") 'cargo-mode-build)
     (define-key km (kbd "e") 'cargo-mode-execute-task)
     (define-key km (kbd "l") 'cargo-mode-last-command)
     (define-key km (kbd "t") 'cargo-mode-test)
+    (define-key km (kbd "o") 'cargo-mode-test-current-buffer)
+    (define-key km (kbd "f") 'cargo-mode-test-current-test)
     km)
   "Cargo-mode keymap after prefix.")
 (fset 'cargo-mode-command-map cargo-mode-command-map)
