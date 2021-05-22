@@ -126,7 +126,7 @@ The current element is FIRST-ARG, remaining args are MORE-ARGS."
     (length (car first-arg))))
 
 (defun cargo-mode--start (name command project-root &optional prompt)
-  "Start the cargo-mode process with NAME and return the created process.
+  "Start the `cargo-mode` process with NAME and return the created process.
 Cargo command is COMMAND.
 The command is  started from directory PROJECT-ROOT.
 If PROMPT is non-nil, modifies the command."
@@ -252,7 +252,7 @@ If PREFIX is non-nil, prompt for additional params."
 
 ;;;###autoload
 (defun cargo-mode-last-command ()
-  "Execute the last cargo-mode task."
+  "Execute the last `cargo-mode` task."
   (interactive)
   (if cargo-mode--last-command
       (apply #'cargo-mode--start cargo-mode--last-command)
