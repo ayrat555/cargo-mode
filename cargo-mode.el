@@ -103,48 +103,6 @@ If PROMPT is non-nil, modifies the command."
   (let ((closest-path (or buffer-file-name default-directory)))
     (locate-dominating-file closest-path "Cargo.toml")))
 
-(defun cargo-mode-execute-task (&optional prefix)
-  "Select and execute cargo task.
-If PREFIX is non-nil, prompt for additional params."
-  (interactive "P")
-  (let* ((project-root (cargo-mode--project-directory))
-         (available-commands (cargo-mode--available-tasks project-root))
-         (selected-command (completing-read "select cargo command: " available-commands))
-         (command-without-doc (car (split-string selected-command))))
-    (cargo-mode--start "execute" command-without-doc project-root prefix)))
-
-(defun cargo-mode-test (&optional prefix)
-  "Run the `cargo test` command.
-If PREFIX is non-nil, prompt for additional params."
-  (interactive "P")
-  (let ((project-root (cargo-mode--project-directory)))
-    (cargo-mode--start "test" cargo-mode-command-test project-root prefix)))
-
-(defun cargo-mode-build (&optional prefix)
-  "Run the `cargo build` command.
-If PREFIX is non-nil, prompt for additional params."
-  (interactive "P")
-  (let ((project-root (cargo-mode--project-directory)))
-    (cargo-mode--start "execute" cargo-mode-command-build project-root prefix)))
-
-(defun cargo-mode-test-current-buffer (&optional prefix)
-  "Run the cargo test for the current buffer.
-If PREFIX is non-nil, prompt for additional params."
-  (interactive "P")
-  (let* ((project-root (cargo-mode--project-directory))
-        (current-mod (print (cargo-mode--current-mod)))
-        (command (concat cargo-mode-command-test " "  current-mod)))
-    (cargo-mode--start "test" command project-root prefix)))
-
-(defun cargo-mode-test-current-test (&optional prefix)
-  "Run the Cargo test command for the current test.
-If PREFIX is non-nil, prompt for additional params."
-  (interactive "P")
-  (let* ((project-root (cargo-mode--project-directory))
-         (test-name (cargo-mode--current-test-fullname))
-         (command (concat cargo-mode-command-test " " test-name)))
-    (cargo-mode--start "test" command project-root prefix)))
-
 (defun cargo-mode--current-mod ()
   "Return the current mod."
   (save-excursion
@@ -197,6 +155,54 @@ If PREFIX is nil, it does nothing"
         (concat command " " params))
     command))
 
+;;;###autoload
+(defun cargo-mode-execute-task (&optional prefix)
+  "Select and execute cargo task.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let* ((project-root (cargo-mode--project-directory))
+         (available-commands (cargo-mode--available-tasks project-root))
+         (selected-command (completing-read "select cargo command: " available-commands))
+         (command-without-doc (car (split-string selected-command))))
+    (cargo-mode--start "execute" command-without-doc project-root prefix)))
+
+;;;###autoload
+(defun cargo-mode-test (&optional prefix)
+  "Run the `cargo test` command.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let ((project-root (cargo-mode--project-directory)))
+    (cargo-mode--start "test" cargo-mode-command-test project-root prefix)))
+
+;;;###autoload
+(defun cargo-mode-build (&optional prefix)
+  "Run the `cargo build` command.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let ((project-root (cargo-mode--project-directory)))
+    (cargo-mode--start "execute" cargo-mode-command-build project-root prefix)))
+
+;;;###autoload
+(defun cargo-mode-test-current-buffer (&optional prefix)
+  "Run the cargo test for the current buffer.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let* ((project-root (cargo-mode--project-directory))
+        (current-mod (print (cargo-mode--current-mod)))
+        (command (concat cargo-mode-command-test " "  current-mod)))
+    (cargo-mode--start "test" command project-root prefix)))
+
+;;;###autoload
+(defun cargo-mode-test-current-test (&optional prefix)
+  "Run the Cargo test command for the current test.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let* ((project-root (cargo-mode--project-directory))
+         (test-name (cargo-mode--current-test-fullname))
+         (command (concat cargo-mode-command-test " " test-name)))
+    (cargo-mode--start "test" command project-root prefix)))
+
+;;;###autoload
 (defun cargo-mode-last-command ()
   "Execute the last cargo-mode task."
   (interactive)
@@ -224,6 +230,7 @@ If PREFIX is nil, it does nothing"
 
 (defvar cargo-minor-mode nil)
 
+;;;###autoload
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode. Used to hold keybindings for cargo-mode.
 \\{cargo-minor-mode-map}"
