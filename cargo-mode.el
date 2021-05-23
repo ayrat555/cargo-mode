@@ -46,6 +46,8 @@
 
 ;;; Code:
 
+(require 'subr-x)
+
 (defcustom cargo-path-to-bin
   (or (executable-find "cargo")
       "~/.cargo/bin/cargo")
