@@ -35,12 +35,12 @@
 ;; (add-hook 'rust-mode-hook 'cargo-minor-mode)
 ;;
 
-;;; C-c d e - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.
-;;; C-c d t - `cargo-mode-test` - Run all tests in the project (`cargo test`).
-;;; C-c d l - `cargo-mode-last-command` - Execute the last executed command.
-;;; C-c d b - `cargo-mode-build` - Build the project (`cargo build`).
-;;; C-c d o - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
-;;; C-c d f - `cargo-mode-test-current-test` - Run the current test where pointer is located.
+;;; C-e e e - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.
+;;; C-e e t - `cargo-mode-test` - Run all tests in the project (`cargo test`).
+;;; C-e e l - `cargo-mode-last-command` - Execute the last executed command.
+;;; C-e e b - `cargo-mode-build` - Build the project (`cargo build`).
+;;; C-e e o - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
+;;; C-e e f - `cargo-mode-test-current-test` - Run the current test where pointer is located.
 ;;;
 ;;; Use `C-u` to add extra command line params before executing a command.
 
@@ -274,11 +274,9 @@ If PREFIX is non-nil, prompt for additional params."
 
 (defvar cargo-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c d") 'cargo-mode-command-map)
+    (define-key map (kbd "C-e e") 'cargo-mode-command-map)
     map)
   "Cargo-map keymap.")
-
-(defvar cargo-minor-mode nil)
 
 ;;;###autoload
 (define-minor-mode cargo-minor-mode
