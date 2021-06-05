@@ -44,23 +44,23 @@ Set `compilation-scroll-output` to non-nil to scroll the *cargo-mode* buffer win
 
 ## Usage
 
-<kbd> C-e e e </kbd> - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.
+<kbd> C-q e e </kbd> - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.
 
-<kbd> C-e e t </kbd> - `cargo-mode-test` - Run all tests in the project (`cargo test`).
+<kbd> C-q e t </kbd> - `cargo-mode-test` - Run all tests in the project (`cargo test`).
 
-<kbd> C-e e l </kbd> - `cargo-mode-last-command` - Execute the last executed command.
+<kbd> C-q e l </kbd> - `cargo-mode-last-command` - Execute the last executed command.
 
-<kbd> C-e e b </kbd> - `cargo-mode-build` - Build the project (`cargo build`).
+<kbd> C-q e b </kbd> - `cargo-mode-build` - Build the project (`cargo build`).
 
 
-<kbd> C-e e o </kbd> - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
+<kbd> C-q e o </kbd> - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
 
-<kbd> C-e e f </kbd> - `cargo-mode-test-current-test` - Run the current test where pointer is located.
+<kbd> C-q e f </kbd> - `cargo-mode-test-current-test` - Run the current test where pointer is located.
 
 
 These are all commands that I use most frequently. You can execute any cargo command (fmt, clean etc) available in the project using `cargo-mode-execute-task`. If you have suggestions for additional commands to add keybindings to, please create an issue.
 
-To change prefix (default <kbd>C-e d</kbd>) use:
+To change prefix (default <kbd>C-q e</kbd>) use:
 
 ```el
  (define-key cargo-minor-mode-map (kbd ...) 'cargo-mode-command-map)
