@@ -18,7 +18,15 @@ Cargo is the Rust package manager.
 
 ### MELPA
 
-Currently, the package is not available on MELPA.
+Set up the MELPA or MELPA Stable repository if you haven't already and install with M-x package-install RET cargo-mode RET.
+
+Or you can use `use-package`:
+
+```lisp
+(use-package cargo-mode
+  :config
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+```
 
 ### From file
 
