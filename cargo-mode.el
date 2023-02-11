@@ -282,7 +282,7 @@ If PREFIX is non-nil, prompt for additional params."
 (define-minor-mode cargo-minor-mode
   "Cargo minor mode.  Used to hold keybindings for `cargo-mode'.
 \\{cargo-minor-mode-map}"
-  :int-value nil
+  :init-value nil
   :lighter " cargo"
   :keymap cargo-minor-mode-map)
 
