@@ -76,7 +76,7 @@ To change prefix (default <kbd>C-q e</kbd>) use:
 
 ## Modify a command before execution
 
-Use `C-u` to add extra command line params before executing a command.
+Use prefix argument (default `C-u`) to add extra command line params before executing a command.
 
 ## Contributing
 
