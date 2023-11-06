@@ -24,7 +24,7 @@
 
 ;; Author: Ayrat Badykov <ayratin555@gmail.com>
 ;; URL: https://github.com/ayrat555/cargo-mode
-;; Version  : 0.0.1
+;; Version  : 0.0.2
 ;; Keywords: tools
 ;; Package-Requires: ((emacs "25.1"))
 
