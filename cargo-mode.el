@@ -145,7 +145,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (compilation-start cmd 'cargo-mode (lambda(_) buffer))
+    (compile cmd t)
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()
