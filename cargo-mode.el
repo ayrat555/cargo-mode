@@ -254,7 +254,7 @@ If PREFIX is non-nil, prompt for additional params."
 
 ;;;###autoload
 (defun cargo-mode-last-command ()
-  "Execute the last `cargo-mode` task."
+  "Re-execute the last `cargo-mode` task."
   (interactive)
   (if cargo-mode--last-command
       (apply #'cargo-mode--start cargo-mode--last-command)
