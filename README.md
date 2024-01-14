@@ -50,6 +50,14 @@ Set `compilation-scroll-output` to non-nil to scroll the *cargo-mode* buffer win
 (setq compilation-scroll-output t)
 ```
 
+By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to use `compilation` mode instead.
+
+```el
+(use-package cargo-mode
+  :custom
+  (cargo-mode-use-comint nil))
+```
+
 ## Usage
 
 <kbd> C-q e e </kbd> - `cargo-execute-task` - List all available tasks and execute one of them.  As a bonus, you'll get a documentation string because `cargo-mode.el` parses shell output of `cargo --list` directly.

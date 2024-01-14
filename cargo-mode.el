@@ -55,6 +55,11 @@
   :type 'file
   :group 'cargo-mode)
 
+(defcustom cargo-mode-use-comint t
+  "If t `compile' runs with comint option paramater."
+  :type 'boolean
+  :group 'cargo-mode)
+
 (defcustom cargo-mode-command-test "test"
   "Subcommand used by `cargo-mode-test'."
   :type 'string
@@ -145,7 +150,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (compile cmd nil)
+    (if cargo-mode-use-comint (compile cmd t) (compile cmd nil))
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()
