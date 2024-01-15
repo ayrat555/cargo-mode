@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3 (2024-01-15)
+
+- Add a parameter to run commands without comint mode ([#9](https://github.com/ayrat555/cargo-mode/pull/9))
+
 ## 0.0.2 (2023-11-06)
 
 ### Enhancements
