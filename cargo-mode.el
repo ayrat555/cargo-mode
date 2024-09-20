@@ -49,8 +49,7 @@
 (require 'subr-x)
 
 (defcustom cargo-path-to-bin
-  (or (executable-find "cargo")
-      "~/.cargo/bin/cargo")
+  nil
   "Path to the cargo executable."
   :type 'file
   :group 'cargo-mode)
@@ -77,6 +76,10 @@
 
 (defvar cargo-mode--last-command nil "Last cargo command.")
 
+(defun cargo-mode--find-bin ()
+    "Find the full path to cargo, referencing cargo-path-to-bin first"
+  (or cargo-path-to-bin (or (executable-find "cargo") "~/.cargo/bin/cargo")))
+
 (define-derived-mode cargo-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
   (setq buffer-read-only t)
@@ -85,7 +88,7 @@
 (defun cargo-mode--fetch-cargo-tasks (project-root)
   "Fetch list of raw commands from shell for project in PROJECT-ROOT."
   (let* ((default-directory (or project-root default-directory))
-         (cmd (concat (shell-quote-argument cargo-path-to-bin) " --list"))
+         (cmd (concat (shell-quote-argument (cargo-mode--find-bin)) " --list"))
          (tasks-string (shell-command-to-string cmd))
          (tasks (butlast (cdr (split-string tasks-string "\n")))))
     (delete-dups tasks)))
@@ -135,10 +138,10 @@ The current element is FIRST-ARG, remaining args are MORE-ARGS."
 (defun cargo-mode--start (name command project-root &optional prompt)
   "Start the `cargo-mode` process with NAME and return the created process.
 Cargo command is COMMAND.
-The command is  started from directory PROJECT-ROOT.
+The command is started from directory PROJECT-ROOT.
 If PROMPT is non-nil, modifies the command."
   (let* ((buffer (concat "*cargo-mode " name "*"))
-         (path-to-bin (shell-quote-argument cargo-path-to-bin))
+         (path-to-bin (shell-quote-argument (cargo-mode--find-bin)))
          (base-cmd (if (string-match-p path-to-bin command)
                   command
                   (concat path-to-bin " " command)))
@@ -150,7 +153,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (if cargo-mode-use-comint (compile cmd t) (compile cmd nil))
+    (compile cmd cargo-mode-use-comint)
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()
