@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5 (2024-01-16)
+
+- Find binary at execution time rather than initialization ([#12](https://github.com/ayrat555/cargo-mode/pull/12))
+
 ## 0.0.4 (2024-01-16)
 
 - Change the default keybindings for cargo-mode ([#8](https://github.com/ayrat555/cargo-mode/pull/8))
