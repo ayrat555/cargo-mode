@@ -78,7 +78,7 @@
 
 (defun cargo-mode--find-bin ()
     "Find the full path to cargo, referencing cargo-path-to-bin first"
-  (or cargo-path-to-bin (or (executable-find "cargo") "~/.cargo/bin/cargo")))
+  (or cargo-path-to-bin (or (executable-find "cargo" t) "~/.cargo/bin/cargo")))
 
 (define-derived-mode cargo-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
