@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6 (2024-01-28)
+
+-  feat: find right cargo for remote buffer #15  ([#15](https://github.com/ayrat555/cargo-mode/pull/15))
+
 ## 0.0.5 (2024-01-16)
 
 - Find binary at execution time rather than initialization ([#12](https://github.com/ayrat555/cargo-mode/pull/12))
