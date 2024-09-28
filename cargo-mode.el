@@ -77,8 +77,10 @@
 (defvar cargo-mode--last-command nil "Last cargo command.")
 
 (defun cargo-mode--find-bin ()
-    "Find the full path to cargo, referencing cargo-path-to-bin first"
-  (or cargo-path-to-bin (or (executable-find "cargo") "~/.cargo/bin/cargo")))
+  "Find the full path to cargo, referencing cargo-path-to-bin first"
+  (or cargo-path-to-bin (or (if (>= emacs-major-version 27)
+                                (executable-find "cargo" t) (executable-find "cargo"))
+                            "~/.cargo/bin/cargo")))
 
 (define-derived-mode cargo-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
