@@ -54,11 +54,6 @@
   :type 'file
   :group 'cargo-mode)
 
-(defcustom cargo-mode-use-comint t
-  "If t `compile' runs with comint option paramater."
-  :type 'boolean
-  :group 'cargo-mode)
-
 (defcustom cargo-mode-command-test "test"
   "Subcommand used by `cargo-mode-test'."
   :type 'string
@@ -82,10 +77,13 @@
                                 (executable-find "cargo" t) (executable-find "cargo"))
                             "~/.cargo/bin/cargo")))
 
-(define-derived-mode cargo-mode compilation-mode "Cargo"
+(define-derived-mode cargo-compile-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
+  (message "using custom mode")
   (setq buffer-read-only t)
-  (setq-local truncate-lines t))
+  (setq-local truncate-lines t)
+  (local-set-key (kbd "q") 'kill-buffer-and-window)
+  (local-set-key (kbd "g") 'cargo-mode-last-command))
 
 (defun cargo-mode--fetch-cargo-tasks (project-root)
   "Fetch list of raw commands from shell for project in PROJECT-ROOT."
@@ -155,7 +153,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (compile cmd cargo-mode-use-comint)
+    (compilation-start cmd 'cargo-compile-mode)
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()
