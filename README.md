@@ -52,7 +52,7 @@ Set `compilation-scroll-output` to non-nil to scroll the *cargo-compile-mode* bu
 (setq compilation-scroll-output t)
 ```
 
-By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to use `compilation` mode instead.
+By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to disable it.
 
 ```el
 (use-package cargo-mode

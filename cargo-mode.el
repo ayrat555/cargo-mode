@@ -82,7 +82,7 @@
                                 (executable-find "cargo" t) (executable-find "cargo"))
                             "~/.cargo/bin/cargo")))
 
-(define-derived-mode cargo-compile-mode compilation-mode "Cargo"
+(define-derived-mode cargo-compilation-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
   (message "using custom mode")
   (setq buffer-read-only t)
@@ -160,7 +160,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (compilation-start cmd 'cargo-compile-mode)
+    (compilation-start cmd 'cargo-compilation-mode)
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()
