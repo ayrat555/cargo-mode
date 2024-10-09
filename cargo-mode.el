@@ -54,6 +54,11 @@
   :type 'file
   :group 'cargo-mode)
 
+(defcustom cargo-mode-use-comint t
+  "If t `compile' runs with comint option paramater."
+  :type 'boolean
+  :group 'cargo-mode)
+
 (defcustom cargo-mode-command-test "test"
   "Subcommand used by `cargo-mode-test'."
   :type 'string
@@ -82,6 +87,8 @@
   (message "using custom mode")
   (setq buffer-read-only t)
   (setq-local truncate-lines t)
+  (if cargo-mode-use-comint
+    (compilation-shell-minor-mode))
   (local-set-key (kbd "q") 'kill-buffer-and-window)
   (local-set-key (kbd "g") 'cargo-mode-last-command))
 
