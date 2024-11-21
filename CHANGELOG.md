@@ -1,8 +1,13 @@
 # Changelog
 
+## 0.0.7 (2024-11-21)
+
+- feat: use custom compilation mode with keybindings ([#19](https://github.com/ayrat555/cargo-mode/pull/19))
+- fix: use beginning-of-defun-raw for current test ([#17](https://github.com/ayrat555/cargo-mode/pull/17))
+
 ## 0.0.6 (2024-01-28)
 
--  feat: find right cargo for remote buffer #15  ([#15](https://github.com/ayrat555/cargo-mode/pull/15))
+-  feat: find right cargo for remote buffer  ([#15](https://github.com/ayrat555/cargo-mode/pull/15))
 
 ## 0.0.5 (2024-01-16)
 
