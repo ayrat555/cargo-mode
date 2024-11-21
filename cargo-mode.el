@@ -82,10 +82,15 @@
                                 (executable-find "cargo" t) (executable-find "cargo"))
                             "~/.cargo/bin/cargo")))
 
-(define-derived-mode cargo-mode compilation-mode "Cargo"
+(define-derived-mode cargo-compilation-mode compilation-mode "Cargo"
   "Major mode for the Cargo buffer."
+  (message "using custom mode")
   (setq buffer-read-only t)
-  (setq-local truncate-lines t))
+  (setq-local truncate-lines t)
+  (if cargo-mode-use-comint
+    (compilation-shell-minor-mode))
+  (local-set-key (kbd "q") 'kill-buffer-and-window)
+  (local-set-key (kbd "g") 'cargo-mode-last-command))
 
 (defun cargo-mode--fetch-cargo-tasks (project-root)
   "Fetch list of raw commands from shell for project in PROJECT-ROOT."
@@ -155,7 +160,7 @@ If PROMPT is non-nil, modifies the command."
                               buffer-file-name
                               (string-prefix-p project-root (file-truename buffer-file-name)))))
     (setq cargo-mode--last-command (list name cmd project-root))
-    (compile cmd cargo-mode-use-comint)
+    (compilation-start cmd 'cargo-compilation-mode)
     (get-buffer-process buffer)))
 
 (defun cargo-mode--project-directory ()

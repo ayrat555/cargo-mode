@@ -46,13 +46,13 @@ Add a hook to the mode that you're using with Rust, for example, `rust-mode`:
 (add-hook 'rust-mode-hook 'cargo-minor-mode)
 ```
 
-Set `compilation-scroll-output` to non-nil to scroll the *cargo-mode* buffer window as output appears. The value ‘first-error’ stops scrolling at the first error, and leaves point on its location in the *cargo-mode* buffer. For example:
+Set `compilation-scroll-output` to non-nil to scroll the *cargo-compile-mode* buffer window as output appears. The value ‘first-error’ stops scrolling at the first error, and leaves point on its location in the *cargo-mode* buffer. For example:
 
 ```el
 (setq compilation-scroll-output t)
 ```
 
-By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to use `compilation` mode instead.
+By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to disable it.
 
 ```el
 (use-package cargo-mode
