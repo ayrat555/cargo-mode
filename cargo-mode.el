@@ -189,12 +189,10 @@ If PROMPT is non-nil, modifies the command."
   "Return the current test."
   (save-excursion
     (unless (cargo-mode--defun-at-point-p)
-      (cond ((fboundp 'rust-beginning-of-defun)
-	     (rust-beginning-of-defun))
-	    ((fboundp 'rustic-beginning-of-defun)
-	     (rustic-beginning-of-defun))
-	    (t (user-error "%s needs either rust-mode or rustic-mode"
-			   this-command))))
+      (if beginning-of-defun-function
+          (beginning-of-defun-raw)
+          (user-error "%s needs a supported major mode like rust-mode or rustic-mode"
+		      this-command)))
     (beginning-of-line)
     (search-forward "fn ")
     (let* ((line (buffer-substring-no-properties (point)
