@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.8 (2025-01-06)
+
+- feat: add Clippy command ([#22](https://github.com/ayrat555/cargo-mode/pull/22))
+
 ## 0.0.7 (2024-11-21)
 
 - feat: use custom compilation mode with keybindings ([#19](https://github.com/ayrat555/cargo-mode/pull/19))
