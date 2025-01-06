@@ -41,6 +41,7 @@
 ;;; C-c a b - `cargo-mode-build` - Build the project (`cargo build`).
 ;;; C-c a o - `cargo-mode-test-current-buffer` - Run all tests in the current buffer.
 ;;; C-c a f - `cargo-mode-test-current-test` - Run the current test where pointer is located.
+;;; C-c a c - `cargo-mode-clippy` - Run Clippy in the project (`cargo clippy`).
 ;;;
 ;;; Use `C-u` to add extra command line params before executing a command.
 
@@ -66,6 +67,11 @@
 
 (defcustom cargo-mode-command-build "build"
   "Subcommand used by `cargo-mode-build'."
+  :type 'string
+  :group 'cargo-mode)
+
+(defcustom cargo-mode-command-clippy "clippy"
+  "Subcommand used by `cargo-mode-clippy'."
   :type 'string
   :group 'cargo-mode)
 
@@ -246,6 +252,14 @@ If PREFIX is non-nil, prompt for additional params."
     (cargo-mode--start "execute" cargo-mode-command-build project-root prefix)))
 
 ;;;###autoload
+(defun cargo-mode-clippy (&optional prefix)
+  "Run the `cargo clippy` command.
+If PREFIX is non-nil, prompt for additional params."
+  (interactive "P")
+  (let ((project-root (cargo-mode--project-directory)))
+    (cargo-mode--start "clippy" cargo-mode-command-clippy project-root prefix)))
+
+;;;###autoload
 (defun cargo-mode-test-current-buffer (&optional prefix)
   "Run the cargo test for the current buffer.
 If PREFIX is non-nil, prompt for additional params."
@@ -281,6 +295,7 @@ If PREFIX is non-nil, prompt for additional params."
     (define-key km (kbd "t") 'cargo-mode-test)
     (define-key km (kbd "o") 'cargo-mode-test-current-buffer)
     (define-key km (kbd "f") 'cargo-mode-test-current-test)
+    (define-key km (kbd "c") 'cargo-mode-clippy)
     km)
   "Cargo-mode keymap after prefix.")
 (fset 'cargo-mode-command-map cargo-mode-command-map)
