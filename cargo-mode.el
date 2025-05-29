@@ -153,13 +153,17 @@ The current element is FIRST-ARG, remaining args are MORE-ARGS."
 Cargo command is COMMAND.
 The command is started from directory PROJECT-ROOT.
 If PROMPT is non-nil, modifies the command."
-  (let* ((buffer (concat "*cargo-mode " name "*"))
-         (path-to-bin (shell-quote-argument (cargo-mode--find-bin)))
+  (let* ((path-to-bin (shell-quote-argument (cargo-mode--find-bin)))
          (base-cmd (if (string-match-p path-to-bin command)
                   command
                   (concat path-to-bin " " command)))
          (cmd (cargo-mode--maybe-add-additional-params base-cmd prompt))
          (default-directory (or project-root default-directory)))
+    (cargo-mode--start-cmd name cmd project-root)))
+
+(defun cargo-mode--start-cmd (name cmd project-root)
+  "Start the `cargo-mode` process with NAME and return the created process."
+  (let* ((buffer (concat "*cargo-mode " name "*")))
     (save-some-buffers (not compilation-ask-about-save)
                        (lambda ()
                          (and project-root
@@ -284,7 +288,7 @@ If PREFIX is non-nil, prompt for additional params."
   "Re-execute the last `cargo-mode` task."
   (interactive)
   (if cargo-mode--last-command
-      (apply #'cargo-mode--start cargo-mode--last-command)
+      (apply #'cargo-mode--start-cmd cargo-mode--last-command)
     (message "Last command is not found.")))
 
 (defvar cargo-mode-command-map
