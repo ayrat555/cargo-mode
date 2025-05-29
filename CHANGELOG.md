@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9 (2025-05-29)
+
+- fix: issue with rerun from compilation buffer ([#24](https://github.com/ayrat555/cargo-mode/pull/24))
+
 ## 0.0.8 (2025-01-06)
 
 - feat: add Clippy command ([#22](https://github.com/ayrat555/cargo-mode/pull/22))
