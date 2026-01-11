@@ -75,6 +75,19 @@
   :type 'string
   :group 'cargo-mode)
 
+(defcustom cargo-mode-default-params '()
+  "List of commands and their corresponding default parameters.
+
+Each element can be either:
+- (COMMAND . PARAMS) where COMMAND is string
+- ((COMMAND ALIAS1 ALIAS2 ...) . PARAMS) where COMMAND, ALIAS1, etc are strings
+PARAMS is a string."
+  :type '(alist :key-type (choice
+                            (repeat :tag "List of commands" string)
+                            (string :tag "Single command"))
+                :value-type (string :tag "Parameter string"))
+  :group 'cargo-mode)
+
 (defconst cargo-mode-test-mod-regexp "^[[:space:]]*mod[[:space:]]+[[:word:][:multibyte:]_][[:word:][:multibyte:]_[:digit:]]*[[:space:]]*{")
 
 (defconst cargo-mode-test-regexp "^[[:space:]]*fn[[:space:]]*"
@@ -154,10 +167,7 @@ Cargo command is COMMAND.
 The command is started from directory PROJECT-ROOT.
 If PROMPT is non-nil, modifies the command."
   (let* ((path-to-bin (shell-quote-argument (cargo-mode--find-bin)))
-         (base-cmd (if (string-match-p path-to-bin command)
-                  command
-                  (concat path-to-bin " " command)))
-         (cmd (cargo-mode--maybe-add-additional-params base-cmd prompt))
+         (cmd (cargo-mode--maybe-add-additional-params path-to-bin command prompt))
          (default-directory (or project-root default-directory)))
     (cargo-mode--start-cmd name cmd project-root)))
 
@@ -220,13 +230,29 @@ If PROMPT is non-nil, modifies the command."
                 (cargo-mode--current-test))
       (cargo-mode--current-test))))
 
-(defun cargo-mode--maybe-add-additional-params (command prefix)
-  "Prompt for additional cargo command COMMAND params.
+(defun cargo-mode--default-params-testfn (key candidate)
+  "Check all of KEY when deciding whether we've found a CANDIDATE match."
+  (cond ((stringp key) (equal candidate key))
+        ((consp key) (seq-contains-p key candidate))))
+
+(defun cargo-mode--default-params-for (cmd)
+  "Find default params for CMD."
+  (alist-get cmd cargo-mode-default-params nil nil
+             #'cargo-mode--default-params-testfn))
+
+(defun cargo-mode--maybe-add-additional-params (cargo command prefix)
+  "Prompt for additional CARGO COMMAND params.
 If PREFIX is nil, it does nothing"
-  (if prefix
-      (let  ((params (read-string (concat "additional cargo command params for `" command "`: "))))
-        (concat command " " params))
-    command))
+  (let ((base-cmd (concat cargo " " command)))
+    (if prefix
+        (let  ((params (read-string (concat "additional cargo command params for `" command "`: "))))
+          (concat base-cmd " " params))
+
+      ;; If there are pre-defined default parameters for the command,
+      ;; then use them
+      (if-let* ((default-params (cargo-mode--default-params-for command)))
+          (concat base-cmd " " default-params)
+        base-cmd))))
 
 ;;;###autoload
 (defun cargo-mode-execute-task (&optional prefix)
