@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Enhancements
+- feat: Add support for default parameters per-command with cargo-mode-default-params ([#27](https://github.com/ayrat555/cargo-mode/pull/27))
+
 ## 0.0.9 (2025-05-29)
 
 - fix: issue with rerun from compilation buffer ([#24](https://github.com/ayrat555/cargo-mode/pull/24))

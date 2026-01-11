@@ -52,6 +52,17 @@ Set `compilation-scroll-output` to non-nil to scroll the *cargo-compile-mode* bu
 (setq compilation-scroll-output t)
 ```
 
+Set default parameters for cargo commands (and their aliases) with `cargo-mode-default-params`, For example:
+
+```el
+(use-package cargo-mode
+  :custom
+  (cargo-mode-default-params 
+    '((("r" "run") . "--bin example")
+      (("t" "test") . "-- --no-capture")
+      ("doc" . "--open"))))
+```
+
 By default `cargo-mode` use `comint` mode for compilation buffer. Set `cargo-mode-use-comint` to nil to disable it.
 
 ```el
