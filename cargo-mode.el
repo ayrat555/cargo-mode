@@ -167,7 +167,7 @@ Cargo command is COMMAND.
 The command is started from directory PROJECT-ROOT.
 If PROMPT is non-nil, modifies the command."
   (let* ((path-to-bin (shell-quote-argument (cargo-mode--find-bin)))
-         (cmd (cargo-mode--maybe-add-additional-params path-to-bin command prompt))
+         (cmd (cargo-mode--assemble-command-string path-to-bin command prompt))
          (default-directory (or project-root default-directory)))
     (cargo-mode--start-cmd name cmd project-root)))
 
@@ -240,8 +240,8 @@ If PROMPT is non-nil, modifies the command."
   (alist-get cmd cargo-mode-default-params nil nil
              #'cargo-mode--default-params-testfn))
 
-(defun cargo-mode--maybe-add-additional-params (cargo command prefix)
-  "Prompt for additional CARGO COMMAND params.
+(defun cargo-mode--assemble-command-string (cargo command prefix)
+  "Prompt for additional CARGO params and assemble the COMMAND string.
 If PREFIX is non-nil, then show a prompt - prefilled with default
 params if they exist.
 If PREFIX is nil, and default params are set, add the default params.
