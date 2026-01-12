@@ -242,15 +242,16 @@ If PROMPT is non-nil, modifies the command."
 
 (defun cargo-mode--maybe-add-additional-params (cargo command prefix)
   "Prompt for additional CARGO COMMAND params.
-If PREFIX is nil, it does nothing"
-  (let ((base-cmd (concat cargo " " command)))
+If PREFIX is non-nil, then show a prompt - prefilled with default
+params if they exist.
+If PREFIX is nil, add default params if they exist, otherwise do
+nothing."
+  (let ((base-cmd (concat cargo " " command))
+        (default-params (cargo-mode--default-params-for command)))
     (if prefix
-        (let  ((params (read-string (concat "additional cargo command params for `" command "`: "))))
+        (let  ((params (read-string (concat "additional cargo command params for `" command "`: ") default-params)))
           (concat base-cmd " " params))
-
-      ;; If there are pre-defined default parameters for the command,
-      ;; then use them
-      (if-let* ((default-params (cargo-mode--default-params-for command)))
+      (if default-params
           (concat base-cmd " " default-params)
         base-cmd))))
 
