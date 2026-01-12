@@ -244,8 +244,10 @@ If PROMPT is non-nil, modifies the command."
   "Prompt for additional CARGO COMMAND params.
 If PREFIX is non-nil, then show a prompt - prefilled with default
 params if they exist.
-If PREFIX is nil, add default params if they exist, otherwise do
-nothing."
+If PREFIX is nil, and default params are set, add the default params.
+If PREFIX is nil, and no default params are set, pass back the command
+to run with no additions.
+."
   (let ((base-cmd (concat cargo " " command))
         (default-params (cargo-mode--default-params-for command)))
     (if prefix
